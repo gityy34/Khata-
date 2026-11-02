@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0F172A">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>کھاتہ و فنانس منیجر</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #F8FAFC;
+      --card-bg: #FFFFFF;
+      --text: #0F172A;
+      --subtext: #64748B;
+      --primary: #2563EB;
+      --accent: #0F172A;
+      --border: #E2E8F0;
+      --green: #10B981;
+      --red: #EF4444;
+      --orange: #F59E0B;
+    }
+    [data-theme="oledBlack"] {
+      --bg: #000000;
+      --card-bg: #121212;
+      --text: #F8FAFC;
+      --subtext: #94A3B8;
+      --primary: #3B82F6;
+      --accent: #FFFFFF;
+      --border: #262626;
+      --green: #22C55E;
+      --red: #EF4444;
+      --orange: #F59E0B;
+    }
+    [data-theme="cyberNeon"] {
+      --bg: #070B19;
+      --card-bg: #0D152D;
+      --text: #E0F2FE;
+      --subtext: #7DD3FC;
+      --primary: #00F0FF;
+      --accent: #39FF14;
+      --border: #1E293B;
+      --green: #39FF14;
+      --red: #FF0055;
+      --orange: #FFB703;
+    }
+    [data-theme="emeraldLuxury"] {
+      --bg: #041C15;
+      --card-bg: #082D22;
+      --text: #ECFDF5;
+      --subtext: #6EE7B7;
+      --primary: #D4AF37;
+      --accent: #10B981;
+      --border: #134E3E;
+      --green: #10B981;
+      --red: #F43F5E;
+      --orange: #FBBF24;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background: var(--bg); color: var(--text); padding-bottom: 90px; transition: background 0.25s ease, color 0.25s ease; }
+    
+    header { padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; }
+    .guest-badge { background: rgba(245, 158, 11, 0.15); color: var(--orange); border: 1px solid var(--orange); padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+    
+    .container { padding: 0 16px; }
+    
+    /* Hero Balance Card */
+    .hero-card { background: var(--card-bg); border-radius: 24px; padding: 22px; border: 1px solid var(--border); box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); margin-bottom: 18px; }
+    .hero-title { font-size: 12px; color: var(--subtext); font-weight: 700; letter-spacing: 0.5px; }
+    .net-balance { font-size: 32px; font-weight: 800; color: var(--text); margin: 6px 0 18px; }
+    .stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .stat-box { padding: 12px; border-radius: 14px; }
+    .stat-box.income { background: rgba(16, 185, 129, 0.12); color: var(--green); }
+    .stat-box.expense { background: rgba(239, 68, 68, 0.12); color: var(--red); }
+    .stat-val { font-size: 18px; font-weight: 800; margin-top: 4px; }
+
+    /* Quick Action Buttons */
+    .actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 22px; }
+    .act-btn { border: none; border-radius: 14px; padding: 12px; color: #fff; font-weight: 700; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .act-btn.exp { background: var(--red); }
+    .act-btn.inc { background: var(--green); }
+
+    /* List Items */
+    .section-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; }
+    .card-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 14px 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+    .card-item .info h4 { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
+    .card-item .info p { font-size: 12px; color: var(--subtext); }
+    .card-item .amt { font-size: 16px; font-weight: 800; }
+
+    /* Floating Dock */
+    .dock { position: fixed; bottom: 16px; left: 16px; right: 16px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 30px; padding: 8px 12px; display: flex; justify-content: space-around; box-shadow: 0 12px 30px rgba(0,0,0,0.15); z-index: 99; }
+    .dock-btn { border: none; background: transparent; color: var(--subtext); font-size: 12px; font-weight: 700; padding: 8px 14px; border-radius: 20px; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+    .dock-btn.active { color: var(--primary); background: rgba(37, 99, 235, 0.12); }
+
+    /* Modal Sheet */
+    .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: flex-end; z-index: 100; }
+    .modal-content { background: var(--card-bg); width: 100%; border-radius: 24px 24px 0 0; padding: 22px; max-height: 85vh; overflow-y: auto; }
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 6px; color: var(--subtext); }
+    .form-input { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-size: 16px; font-weight: 600; }
+    .submit-btn { width: 100%; padding: 14px; border-radius: 14px; border: none; background: var(--primary); color: #fff; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 10px; }
+    
+    .theme-card { padding: 14px; border-radius: 14px; margin-bottom: 10px; cursor: pointer; border: 2px solid transparent; font-weight: 700; display: flex; justify-content: space-between; }
+    .theme-card.active { border-color: var(--primary); }
+  </style>
+</head>
+<body data-theme="cleanLight">
+
+  <header>
+    <div>
+      <h2 style="font-size: 19px; font-weight: 800;">کھاتہ و بجٹ منیجر</h2>
+      <span id="currentDate" style="font-size: 11px; color: var(--subtext);"></span>
+    </div>
+    <div class="guest-badge">● آف لائن موڈ (محفوظ)</div>
+  </header>
+
+  <!-- TAB 1: HOME -->
+  <div id="tab-home" class="tab-page container">
+    <div class="hero-card">
+      <div class="hero-title">موجودہ بچت (NET BALANCE)</div>
+      <div class="net-balance" id="netBalance">Rs 0.00</div>
+      <div class="stat-row">
+        <div class="stat-box income">
+          <div style="font-size: 11px; font-weight: 700;">▲ آمدنی (Income)</div>
+          <div class="stat-val" id="totalIncome">Rs 0</div>
+        </div>
+        <div class="stat-box expense">
+          <div style="font-size: 11px; font-weight: 700;">▼ خرچہ (Expense)</div>
+          <div class="stat-val" id="totalExpense">Rs 0</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions-grid">
+      <button class="act-btn exp" onclick="openTxModal('expense')">➖ نیا خرچہ</button>
+      <button class="act-btn inc" onclick="openTxModal('income')">➕ نئی آمدنی</button>
+    </div>
+
+    <div class="section-title">حالیہ اخراجات و آمدنی (منٹ بہ منٹ)</div>
+    <div id="txList"></div>
+  </div>
+
+  <!-- TAB 2: UDHAAR -->
+  <div id="tab-udhaar" class="tab-page container" style="display:none;">
+    <div class="hero-card">
+      <div class="stat-row">
+        <div class="stat-box income">
+          <div style="font-size: 11px; font-weight: 700;">لینے ہیں (TO COLLECT)</div>
+          <div class="stat-val" id="totalCollect">Rs 0</div>
+        </div>
+        <div class="stat-box expense">
+          <div style="font-size: 11px; font-weight: 700;">دینے ہیں (TO PAY)</div>
+          <div class="stat-val" id="totalPay">Rs 0</div>
+        </div>
+      </div>
+    </div>
+    <button class="act-btn inc" style="width:100%; margin-bottom: 16px;" onclick="openDebtModal()">➕ نیا ادھار درج کریں</button>
+    <div class="section-title">تمام ادھار کھاتے</div>
+    <div id="debtList"></div>
+  </div>
+
+  <!-- TAB 3: REMINDERS -->
+  <div id="tab-reminders" class="tab-page container" style="display:none;">
+    <button class="act-btn inc" style="width:100%; margin-bottom: 16px;" onclick="openRemModal()">🔔 نیا بل / ٹاسک ریمائنڈر</button>
+    <div class="section-title">آنے والے الرٹس اور بلز</div>
+    <div id="remList"></div>
+  </div>
+
+  <!-- TAB 4: THEMES -->
+  <div id="tab-themes" class="tab-page container" style="display:none;">
+    <div class="section-title">پسندیدہ تھیم چنیں (4 Themes)</div>
+    <div class="theme-card active" style="background:#fff; color:#000;" onclick="setTheme('cleanLight')">1. Clean Light (صاف سفید)</div>
+    <div class="theme-card" style="background:#000; color:#fff;" onclick="setTheme('oledBlack')">2. OLED Pitch Black (خالص سیاہ)</div>
+    <div class="theme-card" style="background:#070B19; color:#00F0FF;" onclick="setTheme('cyberNeon')">3. Cyber Neon (سائبر نیون)</div>
+    <div class="theme-card" style="background:#041C15; color:#D4AF37;" onclick="setTheme('emeraldLuxury')">4. Emerald Luxury (شاہی سبز)</div>
+  </div>
+
+  <!-- FLOATING DOCK -->
+  <div class="dock">
+    <button class="dock-btn active" onclick="switchTab('home', this)">🏠 ہوم</button>
+    <button class="dock-btn" onclick="switchTab('udhaar', this)">⇄ ادھار</button>
+    <button class="dock-btn" onclick="switchTab('reminders', this)">🔔 ریمائنڈر</button>
+    <button class="dock-btn" onclick="switchTab('themes', this)">🎨 تھیمز</button>
+  </div>
+
+  <!-- MODAL: ADD TRANSACTION -->
+  <div id="txModal" class="modal">
+    <div class="modal-content">
+      <h3 id="txModalTitle" style="margin-bottom: 16px;">نیا اندراج</h3>
+      <div class="form-group">
+        <label>رقم (Amount in Rs)</label>
+        <input type="number" id="txAmount" class="form-input" placeholder="0.00">
+      </div>
+      <div class="form-group">
+        <label>تفصیل یا عنوان (مثلاً Shell Petrol)</label>
+        <input type="text" id="txTitle" class="form-input" placeholder="تفصیل لکھیں">
+      </div>
+      <div class="form-group">
+        <label>کیٹیگری</label>
+        <select id="txCategory" class="form-input">
+          <option value="Travel">⛽ Travel (پیٹرول / کرایہ)</option>
+          <option value="Home">🏠 Home (راشن / گروسری)</option>
+          <option value="Rent">🏢 Rent (کرایہ)</option>
+          <option value="Internet">🌐 Internet / Broadband</option>
+          <option value="Mobile Load">📱 Mobile Balance / Load</option>
+          <option value="Mobile Package">📦 Mobile Call/Data Package</option>
+          <option value="Salary">💼 Salary / Income</option>
+          <option value="Other">➕ دیگر</option>
+        </select>
+      </div>
+      <button class="submit-btn" onclick="saveTransaction()">محفوظ کریں</button>
+      <button class="submit-btn" style="background:transparent; color:var(--subtext); margin-top:6px;" onclick="closeModals()">بند کریں</button>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD DEBT -->
+  <div id="debtModal" class="modal">
+    <div class="modal-content">
+      <h3 style="margin-bottom: 16px;">نیا ادھار کھاتہ</h3>
+      <div class="form-group">
+        <label>بندے کا نام</label>
+        <input type="text" id="debtPerson" class="form-input" placeholder="مثلاً: طارق محمود">
+      </div>
+      <div class="form-group">
+        <label>رقم (Rs)</label>
+        <input type="number" id="debtAmount" class="form-input" placeholder="0">
+      </div>
+      <div class="form-group">
+        <label>قرض کی نوعیت</label>
+        <select id="debtType" class="form-input">
+          <option value="lent">لینا ہے (Lent - میں نے پیسے دیے)</option>
+          <option value="borrowed">دینا ہے (Borrowed - میں نے قرض لیا)</option>
+        </select>
+      </div>
+      <button class="submit-btn" onclick="saveDebt()">محفوظ کریں</button>
+      <button class="submit-btn" style="background:transparent; color:var(--subtext); margin-top:6px;" onclick="closeModals()">بند کریں</button>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD REMINDER -->
+  <div id="remModal" class="modal">
+    <div class="modal-content">
+      <h3 style="margin-bottom: 16px;">نیا بل یا ٹاسک الارم</h3>
+      <div class="form-group">
+        <label>ٹاسک / بل کا عنوان</label>
+        <input type="text" id="remTitle" class="form-input" placeholder="مثلاً: Nayatel Bill ادا کرنا ہے">
+      </div>
+      <div class="form-group">
+        <label>تاریخ اور وقت</label>
+        <input type="datetime-local" id="remDateTime" class="form-input">
+      </div>
+      <button class="submit-btn" onclick="saveReminder()">الارم سیٹ کریں</button>
+      <button class="submit-btn" style="background:transparent; color:var(--subtext); margin-top:6px;" onclick="closeModals()">بند کریں</button>
+    </div>
+  </div>
+
+  <script>
+    let currentTxType = 'expense';
+    let data = {
+      transactions: JSON.parse(localStorage.getItem('khata_tx') || '[]'),
+      debts: JSON.parse(localStorage.getItem('khata_debts') || '[]'),
+      reminders: JSON.parse(localStorage.getItem('khata_rem') || '[]')
+    };
+
+    function init() {
+      const now = new Date();
+      document.getElementById('currentDate').innerText = now.toLocaleDateString('ur-PK', { month: 'long', year: 'numeric', day: 'numeric' });
+      const savedTheme = localStorage.getItem('khata_theme') || 'cleanLight';
+      setTheme(savedTheme);
+      renderAll();
+    }
+
+    function switchTab(tabId, el) {
+      document.querySelectorAll('.tab-page').forEach(p => p.style.display = 'none');
+      document.getElementById('tab-' + tabId).style.display = 'block';
+      document.querySelectorAll('.dock-btn').forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    function setTheme(mode) {
+      document.body.setAttribute('data-theme', mode);
+      localStorage.setItem('khata_theme', mode);
+      document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('active'));
+    }
+
+    function openTxModal(type) {
+      currentTxType = type;
+      document.getElementById('txModalTitle').innerText = type === 'expense' ? '➖ نیا خرچہ درج کریں' : '➕ نئی آمدنی درج کریں';
+      document.getElementById('txModal').style.display = 'flex';
+    }
+
+    function openDebtModal() { document.getElementById('debtModal').style.display = 'flex'; }
+    function openRemModal() { 
+      document.getElementById('remDateTime').value = new Date().toISOString().slice(0, 16);
+      document.getElementById('remModal').style.display = 'flex'; 
+    }
+    function closeModals() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
+
+    function saveTransaction() {
+      const amt = parseFloat(document.getElementById('txAmount').value);
+      const title = document.getElementById('txTitle').value.trim() || document.getElementById('txCategory').value;
+      const cat = document.getElementById('txCategory').value;
+      if (!amt || amt <= 0) return alert('براہِ کرم درست رقم درج کریں');
+
+      data.transactions.unshift({
+        id: Date.now(),
+        amount: amt,
+        title: title,
+        category: cat,
+        type: currentTxType,
+        date: new Date().toLocaleString('en-US', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit', hour12:true })
+      });
+      localStorage.setItem('khata_tx', JSON.stringify(data.transactions));
+      closeModals();
+      renderAll();
+    }
+
+    function saveDebt() {
+      const name = document.getElementById('debtPerson').value.trim();
+      const amt = parseFloat(document.getElementById('debtAmount').value);
+      const type = document.getElementById('debtType').value;
+      if (!name || !amt || amt <= 0) return alert('تمام خانے پر کریں');
+
+      data.debts.unshift({ id: Date.now(), name, amount: amt, paid: 0, type });
+      localStorage.setItem('khata_debts', JSON.stringify(data.debts));
+      closeModals();
+      renderAll();
+    }
+
+    function payDebt(id) {
+      const p = parseFloat(prompt('کتنی رقم وصول یا ادا ہوئی؟'));
+      if (!p || p <= 0) return;
+      const d = data.debts.find(item => item.id === id);
+      if (d) {
+        d.paid += p;
+        localStorage.setItem('khata_debts', JSON.stringify(data.debts));
+        renderAll();
+      }
+    }
+
+    function saveReminder() {
+      const title = document.getElementById('remTitle').value.trim();
+      const dt = document.getElementById('remDateTime').value;
+      if (!title || !dt) return alert('عنوان اور وقت منتخب کریں');
+
+      data.reminders.unshift({ id: Date.now(), title, dt: new Date(dt).toLocaleString(), done: false });
+      localStorage.setItem('khata_rem', JSON.stringify(data.reminders));
+      closeModals();
+      renderAll();
+    }
+
+    function toggleRem(id) {
+      const r = data.reminders.find(item => item.id === id);
+      if (r) {
+        r.done = !r.done;
+        localStorage.setItem('khata_rem', JSON.stringify(data.reminders));
+        renderAll();
+      }
+    }
+
+    function renderAll() {
+      // Balance Calculations
+      let inc = 0, exp = 0;
+      data.transactions.forEach(t => t.type === 'income' ? inc += t.amount : exp += t.amount);
+      document.getElementById('netBalance').innerText = 'Rs ' + (inc - exp).toLocaleString();
+      document.getElementById('totalIncome').innerText = 'Rs ' + inc.toLocaleString();
+      document.getElementById('totalExpense').innerText = 'Rs ' + exp.toLocaleString();
+
+      // Render Transactions
+      const txBox = document.getElementById('txList');
+      txBox.innerHTML = data.transactions.length === 0 ? '<div style="text-align:center; padding:20px; color:var(--subtext)">ابھی کوئی خرچہ درج نہیں ہوا</div>' : '';
+      data.transactions.forEach(t => {
+        const isExp = t.type === 'expense';
+        txBox.innerHTML += `
+          <div class="card-item">
+            <div class="info">
+              <h4>${t.title}</h4>
+              <p>${t.category} • ${t.date}</p>
+            </div>
+            <div class="amt" style="color:${isExp ? 'var(--red)' : 'var(--green)'}">
+              ${isExp ? '-' : '+'} Rs ${t.amount.toLocaleString()}
+            </div>
+          </div>
+        `;
+      });
+
+      // Render Debts
+      let col = 0, pay = 0;
+      data.debts.forEach(d => {
+        const rem = d.amount - d.paid;
+        if (rem > 0) d.type === 'lent' ? col += rem : pay += rem;
+      });
+      document.getElementById('totalCollect').innerText = 'Rs ' + col.toLocaleString();
+      document.getElementById('totalPay').innerText = 'Rs ' + pay.toLocaleString();
+
+      const debtBox = document.getElementById('debtList');
+      debtBox.innerHTML = data.debts.length === 0 ? '<div style="text-align:center; padding:20px; color:var(--subtext)">کوئی ادھار کھاتہ نہیں ہے</div>' : '';
+      data.debts.forEach(d => {
+        const rem = d.amount - d.paid;
+        const isLent = d.type === 'lent';
+        debtBox.innerHTML += `
+          <div class="card-item">
+            <div class="info">
+              <h4>${d.name} <span style="font-size:11px; padding:2px 8px; border-radius:10px; background:${isLent ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)'}; color:${isLent ? 'var(--green)' : 'var(--red)'}">${isLent ? 'لینا ہے' : 'دینا ہے'}</span></h4>
+              <p>کل: Rs ${d.amount.toLocaleString()} | ادا شدہ: Rs ${d.paid.toLocaleString()}</p>
+              <p style="font-weight:700; color:${rem === 0 ? 'var(--subtext)' : (isLent ? 'var(--green)' : 'var(--red)')}">بقایا: Rs ${rem.toLocaleString()}</p>
+            </div>
+            <div>
+              ${rem > 0 ? `<button onclick="payDebt(${d.id})" style="padding:6px 10px; border-radius:10px; border:none; background:var(--primary); color:#fff; font-size:11px; font-weight:700; cursor:pointer;">وصولی/ادائیگی</button>` : '<span style="color:var(--green); font-weight:700; font-size:12px;">حساب برابر ✓</span>'}
+            </div>
+          </div>
+        `;
+      });
+
+      // Render Reminders
+      const remBox = document.getElementById('remList');
+      remBox.innerHTML = data.reminders.length === 0 ? '<div style="text-align:center; padding:20px; color:var(--subtext)">کوئی ریمائنڈر نہیں ہے</div>' : '';
+      data.reminders.forEach(r => {
+        remBox.innerHTML += `
+          <div class="card-item" onclick="toggleRem(${r.id})" style="cursor:pointer; opacity:${r.done ? 0.6 : 1}">
+            <div class="info">
+              <h4 style="${r.done ? 'text-decoration:line-through' : ''}">${r.title}</h4>
+              <p>⏰ ${r.dt}</p>
+            </div>
+            <div>${r.done ? '✅' : '🔔'}</div>
+          </div>
+        `;
+      });
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>
